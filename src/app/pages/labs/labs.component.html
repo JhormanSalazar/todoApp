@@ -1,0 +1,107 @@
+<div class="container">
+  <h1>{{ welcome }}</h1>
+  <ul>
+    <li *ngFor="let task of tasks">
+      {{ task }}
+    </li>
+  </ul>
+
+  <h2>
+    Se pueden ejecutar funciones dentro de los corchetes: así
+    {{ "hola".repeat(3) }}
+  </h2>
+
+  <h3>otro ejemplo, 3 + 3 = {{ 3 + 3 }}</h3>
+  <h4>revisar codigo</h4>
+
+  <h2>Hola soy {{ name }} y mi nickname en juegos es: {{ nickname() }}</h2>
+  <hr />
+
+  <input type="text" [value]="name" /> //Property binding, se encierra la
+  propiedad en [] y luego se le asigna una propiedad que esta dentro del
+  servicio.
+
+  <button [disabled]="disabled">Click me</button>
+  <hr />
+  <p>
+    Person: {{ person().name }} is a real fan of linkin park. His age is:
+    {{ person().age }}
+  </p>
+  <img [src]="person().avatar" alt="" />
+  <p>Are you a linkin park real fan?</p>
+  <h2>(Click)</h2>
+  <input type="button" (click)="showTextLP()" value="Click here soldier" />
+  <h2>(DblClick) y (Change)</h2>
+  <input
+    type="text"
+    (dblclick)="showTextLP()"
+    [value]="person().description()"
+    (change)="changeHandler($event)"
+  />
+
+  <h2>(Keydown)</h2>
+  <input
+    type="text"
+    (keydown)="keydownHandler($event)"
+    value="Type your favorite song"
+  />
+  <h2>(Keydown.shift.t) keydown.tecla.tecla es para atajos de teclado</h2>
+  <input
+    type="text"
+    (keydown.shift.t)="showTextLP()"
+    value="Haz el atajo de teclado shift + t"
+  />
+  <hr />
+  <h1>Signals</h1>
+  <p>
+    signals: hace parte de la funcionalidad reactiva de angular, donde los
+    eventos son granulares, y una vez ejecutados mandan una señal al motor
+    especificando exactamente donde sucedio el evento. se crean de esta manera:
+    <b>let mySignal = signal('ValorDeLaVariable');</b>
+  </p>
+  <h3>Ejemplo:</h3>
+  <p>Hola yo soy una variable de tipo signal: nickname() = <b>{{nickname()}}</b></p>
+  <br>
+  <input
+    type="text"
+    (dblclick)="showTextLP()"
+    [value]="person().description()"
+    (change)="changeHandler($event)"
+  />
+  <p>description: {{person().description()}}</p>
+  <p><b>Signal de una lista de tareas:</b></p>
+  <ul>
+    <p>Elementos totales en la lista: {{ tasksV2().length }}</p>
+    <li *ngFor="let task of tasksV2(); index as j">
+      Tarea {{ j }} - {{ task }}
+    </li>
+  </ul>
+  <hr>
+  <h1>*ngIf</h1>
+  <div *ngIf="1 !== 1">
+    No me renderizo ya que la condicion es falsa
+  </div>
+  <div *ngIf="nickname() === 'Morgone'">
+    Me renderizo ya que la condicion da verdadero
+  </div>
+  <input
+    type="number"
+    [value]="person().age"
+    (change)="changeAgeHandler  ($event)"
+  />
+  <div *ngIf="person().name === 'Jhorman' && person().age === 19 else miBloque"> <!--Aqui se bindea, se pone el nombre del bloque despues de else-->
+    Me renderizo ya que la condicion da verdadero
+  </div>
+  <ng-template #miBloque> <!-- #miBloque: es para poder bindearlo con else-->
+    Soy un bloque que se ejecuta cuando no se cumple la condicion.
+  </ng-template>
+<hr>
+  <h2>[ngSwitch]</h2>
+  <div [ngSwitch]="person().name"> <!--Sirve para evaluar casos-->
+    <p *ngSwitchCase="'Morgone'">Hola soy Morgone</p>
+    <p *ngSwitchCase="'Jhorman'">Hola soy Jhorman</p>
+    <p *ngSwitchCase="'Andres'">Hola soy Andres</p>
+    <p *ngSwitchCase="'Estefa'">Hola soy Estefa</p>
+    <p *ngSwitchDefault>Soy el default, cuando no se cumple ninguna condicion</p>
+  </div>
+</div>
