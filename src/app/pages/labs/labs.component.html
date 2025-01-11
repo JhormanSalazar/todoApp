@@ -97,6 +97,7 @@
   </ng-template>
 <hr>
   <h2>[ngSwitch]</h2>
+  <input type="text" [value]="person().name" (change)="changeName($event)">
   <div [ngSwitch]="person().name"> <!--Sirve para evaluar casos-->
     <p *ngSwitchCase="'Morgone'">Hola soy Morgone</p>
     <p *ngSwitchCase="'Jhorman'">Hola soy Jhorman</p>
@@ -104,4 +105,18 @@
     <p *ngSwitchCase="'Estefa'">Hola soy Estefa</p>
     <p *ngSwitchDefault>Soy el default, cuando no se cumple ninguna condicion</p>
   </div>
+  <hr>
+  <h2>ReactiveForms</h2>
+  <input type="color" [formControl]="colorControl">
+  <p>color: {{ colorControl.value }}</p>
+
+  <svg>
+    <g>
+      <rect x="0" y="0" height="150" width="150" [attr.fill]="colorControl.value"></rect>
+    </g>
+  </svg>
+  <hr>
+
+  <input type="number" [formControl]="widthControl">
+  <span class="box" [style.width.px]="widthControl.value"></span>
 </div>

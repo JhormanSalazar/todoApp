@@ -1,15 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Task } from '../../models/task.model';
 import { Component, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
 export class HomeComponent {
+  newTaskCtrl = new FormControl('', {
+    nonNullable: true,
+    validators: [Validators.required],
+  });
+
   tasksV2 = signal<Task[]>([
     {
       id: 1,
@@ -33,11 +39,12 @@ export class HomeComponent {
     },
   ]);
 
-  inputChangeHandler(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const title = input.value;
-    this.addTask(title);
-    input.value = '';
+  inputChangeHandler() {
+    const isValid = this.newTaskCtrl.valid;
+    const value = this.newTaskCtrl.value;
+    if (!isValid || value.trim() === '') return alert('Se debe ingresar un valor correcto, no vacío'); // Se verifica si cumple con el newTaskCtrl validators y si no viene con muchos espacios "     "; al usar return, no se hace lo que sigue, asi que no se ejecuta el metodo.
+    this.addTask(this.newTaskCtrl.value);
+    this.newTaskCtrl.setValue('');
   }
 
   addTask(title: string) {

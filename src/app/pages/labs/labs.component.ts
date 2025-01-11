@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-labs',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './labs.component.html',
   styleUrl: './labs.component.css',
 })
@@ -15,15 +16,26 @@ export class LabsComponent {
   name = 'Jhorman';
   nickname = signal('Morgone');
   disabled = true;
-  img =
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXGn8w9H7d6E-ne45B18CYwNs3qWoCUBMXkg&s';
+  img = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXGn8w9H7d6E-ne45B18CYwNs3qWoCUBMXkg&s';
+
+  constructor(){
+    this.colorControl.valueChanges.subscribe(value => {
+      console.log(value);
+    })
+  }
 
   person = signal({
     name: 'Jhorman',
-    description:  signal('Hello'),
+    description: signal('Hello'),
     age: 19,
     avatar: this.img,
   });
+
+  //ReactiveForms
+  colorControl = new FormControl();
+  widthControl = new FormControl(100, {
+    nonNullable: true,
+  })
 
   showTextLP() {
     alert('Yes, you are');
@@ -43,11 +55,20 @@ export class LabsComponent {
   changeAgeHandler(event: Event) {
     const input = event.target as HTMLInputElement;
     const newValue = input.value;
-    this.person.update(prevState => {
-     return {
-      ...prevState, age: parseInt(newValue, 10)
-     }
-    }
-  );
+    this.person.update((prevState) => {
+      return {
+        ...prevState,
+        age: parseInt(newValue, 10),
+      };
+    });
+  }
+
+  changeName(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const newName = input.value;
+
+    this.person.update((prevState) => {
+      return {...prevState, name: newName }
+    })
   }
 }
