@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Task } from '../../models/task.model';
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
@@ -15,6 +15,34 @@ export class HomeComponent {
     nonNullable: true,
     validators: [Validators.required],
   });
+
+  filter = signal('all');
+  //Esta funcion muestra las tareas segun su estado: completado, pendiente, o por defecto.
+  // Toma 2 señales, filter() y tasksV2(), con éstos determina el resultado.
+  taskByFilter = computed(() => {
+    const filter = this.filter();
+    const tasks = this.tasksV2();
+
+    if (filter === 'pending') {
+      return tasks.filter((task) => !task.completed);
+    }
+    if (filter === 'completed') {
+      return tasks.filter((task) => task.completed);
+    }
+    return tasks;
+  });
+
+  updateCount(tasks: Task[]): string {
+    let length = 0;
+    const itemsWordLength = (tasks: Task[]) =>
+      tasks.length === 1 ? 'item' : 'items';
+    if (tasks.length >= 1) {
+      length = tasks.length;
+      itemsWordLength(tasks);
+      return `${length} ${itemsWordLength(tasks)}`;
+    }
+    return `${length} ${itemsWordLength(tasks)}`;
+  }
 
   tasksV2 = signal<Task[]>([
     {
@@ -42,7 +70,8 @@ export class HomeComponent {
   inputChangeHandler() {
     const isValid = this.newTaskCtrl.valid;
     const value = this.newTaskCtrl.value;
-    if (!isValid || value.trim() === '') return alert('Se debe ingresar un valor correcto, no vacío'); // Se verifica si cumple con el newTaskCtrl validators y si no viene con muchos espacios "     "; al usar return, no se hace lo que sigue, asi que no se ejecuta el metodo.
+    if (!isValid || value.trim() === '')
+      return alert('Se debe ingresar un valor correcto, no vacío'); // Se verifica si cumple con el newTaskCtrl validators y si no viene con muchos espacios "     "; al usar return, no se hace lo que sigue, asi que no se ejecuta el metodo.
     this.addTask(this.newTaskCtrl.value);
     this.newTaskCtrl.setValue('');
   }
@@ -71,5 +100,33 @@ export class HomeComponent {
         return task;
       })
     );
+  }
+
+  updateTaskEditingMode(index: number) {
+    this.tasksV2.update((prevState) =>
+      prevState.map((task, position) => {
+        return {
+          ...task,
+          editing: position === index && !task.completed ? true : false,
+        };
+      })
+    );
+  }
+
+  updateTaskTitle(index: number, event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.tasksV2.update((prevState) =>
+      prevState.map((task, position) => {
+        return {
+          ...task,
+          title: position === index ? input.value : task.title,
+          editing: false,
+        };
+      })
+    );
+  }
+
+  changeFilter(filter: string) {
+    this.filter.set(filter);
   }
 }
