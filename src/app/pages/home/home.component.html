@@ -13,7 +13,6 @@
       />
     </div>
   </header>
-  <h1>{{ filter() }}</h1>
   <div class="container todoapp-wrapper">
     <!-- This section should be hidden by default and shown when there are todos -->
     <section class="main">
@@ -59,7 +58,7 @@
       </ul>
     </section>
     <!-- This footer should be hidden by default and shown when there are todos -->
-    <footer class="footer">
+    <footer class="footer" *ngIf="tasksV2().length > 0">
       <!-- This should be `0 items left` by default -->
       <span class="todo-count"
         ><strong>{{ updateCount(taskByFilter()) }}</strong>

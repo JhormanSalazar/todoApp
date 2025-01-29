@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Task } from '../../models/task.model';
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, effect, inject, Injector, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Filter } from '../../types/filter.type';
 
 @Component({
   selector: 'app-home',
@@ -11,12 +12,40 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
   styleUrl: './home.component.css',
 })
 export class HomeComponent {
+
+  injector = inject(Injector);
+
+  // constructor() {
+  //   effect(() => {
+  //     const tasks = this.tasksV2();
+  //     localStorage.setItem('tasks', JSON.stringify(tasks));
+  //   })
+  // }
+
+  ngOnInit() {
+    const storage = localStorage.getItem('tasks');
+    if(storage) {
+      const tasks = JSON.parse(storage);
+    console.log(tasks);
+    this.tasksV2.set(tasks);
+    }
+    this.trackTasks();
+  }
+
+  trackTasks() {
+    effect(() => {
+      const tasks = this.tasksV2();
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }, { injector: this.injector }); // El metodo effect debe tener un injector cuando esta fuera del constructor. Este se encarga de ejecutar una funcion cada vez que la señal que esta monitorieando cambia, en este caso las tasksV2()
+  }
+
   newTaskCtrl = new FormControl('', {
     nonNullable: true,
     validators: [Validators.required],
   });
 
-  filter = signal('all');
+
+  filter = signal<Filter>('all');
   //Esta funcion muestra las tareas segun su estado: completado, pendiente, o por defecto.
   // Toma 2 señales, filter() y tasksV2(), con éstos determina el resultado.
   taskByFilter = computed(() => {
@@ -44,28 +73,7 @@ export class HomeComponent {
     return `${length} ${itemsWordLength(tasks)}`;
   }
 
-  tasksV2 = signal<Task[]>([
-    {
-      id: 1,
-      title: 'Tarea1',
-      completed: false,
-    },
-    {
-      id: 2,
-      title: 'Tarea2',
-      completed: false,
-    },
-    {
-      id: 3,
-      title: 'Tarea3',
-      completed: false,
-    },
-    {
-      id: 4,
-      title: 'Tarea4',
-      completed: false,
-    },
-  ]);
+  tasksV2 = signal<Task[]>([]);
 
   inputChangeHandler() {
     const isValid = this.newTaskCtrl.valid;
@@ -126,7 +134,7 @@ export class HomeComponent {
     );
   }
 
-  changeFilter(filter: string) {
+  changeFilter(filter: Filter) {
     this.filter.set(filter);
   }
 }
