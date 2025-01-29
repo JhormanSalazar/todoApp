@@ -69,6 +69,8 @@
     (change)="changeHandler($event)"
   />
   <p>description: {{person().description()}}</p>
+  <hr>
+  <h1>for, vieja sintaxis (revisar codigo)</h1>
   <p><b>Signal de una lista de tareas:</b></p>
   <ul>
     <p>Elementos totales en la lista: {{ tasksV2().length }}</p>
@@ -76,27 +78,56 @@
       Tarea {{ j }} - {{ task }}
     </li>
   </ul>
+
+  <h1>for, nueva sintaxis (revisar codigo)</h1>
+  <ul> <!--Creamos una lista desordenada, y dentro de esta ponemos el ciclo @for-->
+    @for(task of tasksV2(); track task; let i = $index) {
+      <li>{{ i }} {{ task }}</li>
+    } @empty { <!-- Si la lista esta vacia y no se puede iterar, entonces se muestra esto:-->
+      <li>
+        <strong>La lista esta vacia</strong>
+      </li>
+    }
+  </ul>
   <hr>
+
   <h1>*ngIf</h1>
   <div *ngIf="1 !== 1">
     No me renderizo ya que la condicion es falsa
   </div>
-  <div *ngIf="nickname() === 'Morgone'">
+  <div *ngIf="nickname() === 'Morgone'"> <!-- sintaxis vieja de If -->
     Me renderizo ya que la condicion da verdadero
   </div>
+  <!-- sintaxis nueva de If, puede perfectamente convivir con la anterior sintaxis-->
+  @if (nickname() === 'Morgone') {
+    <div>
+      Me renderizo ya que la condicion da verdadero
+    </div>
+  }
+
   <input
     type="number"
     [value]="person().age"
-    (change)="changeAgeHandler  ($event)"
+    (change)="changeAgeHandler($event)"
   />
-  <div *ngIf="person().name === 'Jhorman' && person().age === 19 else miBloque"> <!--Aqui se bindea, se pone el nombre del bloque despues de else-->
+
+  <div *ngIf="person().name === 'Jhorman' && person().age === 19; else miBloque"> <!--Aqui se bindea, se pone el nombre del bloque despues de else-->
     Me renderizo ya que la condicion da verdadero
   </div>
   <ng-template #miBloque> <!-- #miBloque: es para poder bindearlo con else-->
     Soy un bloque que se ejecuta cuando no se cumple la condicion.
   </ng-template>
+
+  <h2>if else sintaxis nueva</h2>
+  @if (person().name === 'Jhorman' && person().age === 19) {
+    <div>Me llamo jhorman y tengo 19 años</div>
+  } @else {
+    <div>soy menor de 19 años</div>
+  }
+
+
 <hr>
-  <h2>[ngSwitch]</h2>
+  <h2>[ngSwitch] (switch vieja sintaxis)</h2>
   <input type="text" [value]="person().name" (change)="changeName($event)">
   <div [ngSwitch]="person().name"> <!--Sirve para evaluar casos-->
     <p *ngSwitchCase="'Morgone'">Hola soy Morgone</p>
@@ -104,6 +135,27 @@
     <p *ngSwitchCase="'Andres'">Hola soy Andres</p>
     <p *ngSwitchCase="'Estefa'">Hola soy Estefa</p>
     <p *ngSwitchDefault>Soy el default, cuando no se cumple ninguna condicion</p>
+  </div>
+
+  <h2>Switch nueva sintaxis</h2>
+  <div>
+    @switch (person().name) {
+      @case ('Jhorman') {
+        <p>Hola soy Jhorman</p>
+      }
+      @case ('Andres') {
+        <p>Hola soy Andres</p>
+      }
+      @case ('Morgone') {
+        <p>Hola soy Morgone</p>
+      }
+      @case ('CounterPlay') {
+        <p>Hola soy CounterPlay</p>
+      }
+      @default {
+        <p>Solo existen 4 casos de nombres los cuales son: Jhorman, Andres, Morgone, CounterPlay</p>
+      }
+    }
   </div>
   <hr>
   <h2>ReactiveForms</h2>
@@ -127,4 +179,9 @@
   <p>
     <input type="text">
   </p>
+
+  <strong><h1>Si se quiere migrar la sintaxis de las directivas en angular de la version antigua a las nuevas, debe correrse el comando: <br>
+  ng g angular/core:control-flow
+  </h1>
+  <p>debe agregarse un arroba antes de la palabra angular</p></strong>
 </div>
