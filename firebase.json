@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "public": "dist\\todo-app\\browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

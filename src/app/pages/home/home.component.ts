@@ -22,17 +22,17 @@ export class HomeComponent {
   //   })
   // }
 
-  ngOnInit() {
+  ngOnInit() { // Este metodo se ejecuta al usar nuestro componente, es decir cada vez que lo estamos usando. Se encarga de verificar si existe un item "tasks" en el localStorage, si existe entonces guardamos el array ya des serializado en una variable 'tasks' y le seteamos este valor al array de tareas que es una signal con .set(tasks), es decir tasksV2() toma el valor del array que está en el localStorage. Luego se ejecuta el metodo trackTasks para detectar los cambios en el array de las tareas y actualizar el item "tasks" en el localStorage;
     const storage = localStorage.getItem('tasks');
     if(storage) {
-      const tasks = JSON.parse(storage);
+    const tasks = JSON.parse(storage);
     console.log(tasks);
     this.tasksV2.set(tasks);
     }
     this.trackTasks();
   }
 
-  trackTasks() {
+  trackTasks() { // Este metodo actualiza los cambios en el local storage al detectar cambios en la señal tasksV2();
     effect(() => {
       const tasks = this.tasksV2();
       localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -110,7 +110,7 @@ export class HomeComponent {
     );
   }
 
-  updateTaskEditingMode(index: number) {
+  updateTaskEditingMode(index: number) { // Este metodo se usa para cambiar el estado de edicion de una tarea; Si se da doble click en la tarea entonces le pasamos el index de esta tarea en el array, luego actualizamos el array con .update(); y al estado previo le retornamos un array al que se le editó la tarea con su propiedad editing en true o false.
     this.tasksV2.update((prevState) =>
       prevState.map((task, position) => {
         return {
